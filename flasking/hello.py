@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify
 import atexit
 import cf_deployment_tracker
 import os
+import re
 
 #from __future__ import print_function
 import tensorflow as tf
@@ -33,7 +34,7 @@ n = 5000
 sample = 0
 
 
-def sample(prime):
+def sample(prime, text_length):
     with open('save/config.pkl', 'rb') as f:
         saved_args = cPickle.load(f)
     with open('save/chars_vocab.pkl', 'rb') as f:
@@ -45,13 +46,11 @@ def sample(prime):
         ckpt = tf.train.get_checkpoint_state('save')
         if ckpt and ckpt.model_checkpoint_path:
             saver.restore(sess, ckpt.model_checkpoint_path)
-            sam = model.sample(sess, chars, vocab, n, prime,
-                               sample).encode('utf-8')
-            print (sam.decode('utf-8'))
-            with open("sample.txt", 'w') as f:
-                f.write(str(sam.decode('utf-8')))
+            sam = model.sample(sess, chars, vocab, text_length, prime,
+                               sample)
     tf.reset_default_graph()
-    return sam.decode('utf-8')
+    sampled_text = re.sub('\n','<br />',sam)
+    return sampled_text
 
 
 
@@ -65,10 +64,21 @@ def home():
 
 
 
-@app.route('/numbers/<user_name>/<prime>')
-def hello_world(user_name, prime):
-    text = sample(prime)
-    return 'Hello, World! %s %s' % (user_name, text)
+@app.route('/SOU/<prime>/<int:text_length>')
+def hello_world(prime, text_length):
+    text = sample(prime, text_length)
+    template = '''
+<html>
+    <head>
+        <title>En alternativ SOU. Kim Svensson, AI</title>
+    </head>
+    <body width='500'><div>
+        <h3>En alternativ SOU</h3>
+        <p>'''+text+ '''</p>
+        </div>
+    </body>
+</html>'''
+    return template
 
 
 if __name__ == '__main__':
