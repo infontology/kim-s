@@ -1,5 +1,5 @@
 ---
 applications:
- - name: KimS
+ - name: 2
    random-route: true
    memory: 512M

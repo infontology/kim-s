@@ -64,9 +64,17 @@ def home():
 
 
 
+
 @app.route('/SOU/<prime>/<int:text_length>')
 def hello_world(prime, text_length):
-    text = sample(prime, text_length)
+    path = 'save'
+    # list of all content in a directory, filtered so only directories are returned
+    dir_list = [directory for directory in os.listdir(path) if os.path.isdir(os.path.join(path,directory))]
+    print(dir_list)
+    text = "Hej" #sample(prime, text_length)
+    option_list = ""
+    for o in dir_list:
+        option_list = option_list + '<option value="'+o+'">'+o+'</option>'
     template = '''
 <html>
     <head>
@@ -74,12 +82,17 @@ def hello_world(prime, text_length):
     </head>
     <body width='500'><div>
         <h3>En alternativ SOU</h3>
+        <p>'''+render_template('echo.html', value = option_list)+'''</p>
+        <p><select>'''+option_list+ '''</select></p>
         <p>'''+text+ '''</p>
         </div>
     </body>
 </html>'''
     return template
 
+@app.route("/temp")
+def hello():
+    return render_template('echo.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
