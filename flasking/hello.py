@@ -73,7 +73,7 @@ def sample_select(prime, text_length, dir):
             sam = model.sample(sess, chars, vocab, text_length, prime,
                                sample)
     tf.reset_default_graph()
-    sampled_text = re.sub('\n','<br />',sam)
+    sampled_text = sam # re.sub('\n','<br />',sam)
     return sampled_text
 
 
@@ -134,8 +134,7 @@ def hello_world2():
     text = sample_select(prime, text_length, select)
 
     text = html.unescape(text)
-    val = option_fill()
-    print (val)
+    print(text)
     return render_template('select1.html', data=text)
 
 
