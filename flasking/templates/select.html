@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div>
+      <p>
+        Välj vilken textmängd Kim ska utgå ifrån för att generera ny text.
+      </p>
+      <form class="form-inline" method="POST" action="{{ url_for('generate_text') }}">
+  <div class="form-group">
+    <div class="input-group">
+        <span class="input-group-addon">Välj textmängd</span>
+            <select name="comp_select" class="selectpicker form-control">
+              {% for o in data %}
+              <option value="{{ o.dir }}">{{ o.name }}</option>
+              {% endfor %}
+            </select>
+    </div>
+    <div>
+
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Frö</span>
+      </div>
+        <input type="text" name = "prime" class="form-control" value = "Lagen" placeholder="Lagen" aria-label="prime" aria-describedby="basic-addon1">
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Frö</span>
+      </div>
+        <input type="text" name = "length" class="form-control" value = "5000" placeholder="5000" aria-label="length" aria-describedby="basic-addon1">
+    </div>
+    <button type="submit" class="btn btn-default">Go</button>
+  </div>
+</form>
+    </div>
+
+    {% endblock %}
