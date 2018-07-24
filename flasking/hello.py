@@ -38,6 +38,7 @@ port = int(os.getenv('PORT', 8000))
 
 n = 5000
 sample = 0
+data=[{'dir':'save', 'name':'SOU'}, {'dir':'save/hammar_sou_livskvalitet_blandat_120000t/save', 'name':'SOU+Hammar'}, {'dir':'save/hammar/save', 'name':'Hammar'}]
 
 
 def sample(prime, text_length):
@@ -84,20 +85,10 @@ def sample_select(prime, text_length, dir):
 def home():
     return render_template('index.html')
 
-def option_fill():
-    options = ['Volvo', 'Saab', 'Mercedes', 'Audi']
-    html =''
-    for option in options:
-        html = html + '<option value="'
-        html = html + option
-        html = html + '">'
-        html = html + option
-        html = html + '</option>\n'
-    #print ('Hej' + str(html))
-    return html
+
 
 # Härifrån: https://gist.github.com/rduplain/1641344 Ändrat till io enligt en kommentar
-@app.route('/plot.png')
+@app.route('/plot/')
 def plot():
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
@@ -115,31 +106,29 @@ def plot():
 
 # Titta här! https://stackoverflow.com/questions/32019733/getting-value-from-select-tag-using-flask
 
-@app.route('/select1')
-def index():
+@app.route('/select/')
+def select():
     return render_template(
         'select.html',
-        data=[{'name':'save'}, {'name':'save/hammar_sou_livskvalitet_blandat_120000t/save'}, {'name':'save/hammar/save'}])
+        data=data)
 
-@app.route('/select2' , methods=['GET', 'POST'])
-def test():
-    select = request.form.get('comp_select')
-    return(str(select)) # just to see what select is
-
-@app.route('/valj/' , methods=['GET', 'POST'])
-def hello_world2():
+@app.route('/text/' , methods=['GET', 'POST'])
+def generate_text():
     prime = 'Utredningen'
     text_length = 2000
     select = request.form.get('comp_select')
+    prime = request.form.get('prime')
+    text_length = int(request.form.get('length'))
     text = sample_select(prime, text_length, select)
-
+    textmaengd = next(item for item in data if item["dir"] == select)['name']
+    title = "Text baserat på " + prime + ' från ' + textmaengd
     text = html.unescape(text)
     print(text)
-    return render_template('select1.html', data=text)
+    return render_template('text.html', data=text, title=title)
 
 
 @app.route('/SOU/<prime>/<int:text_length>')
-def hello_world(prime, text_length):
+def hello_world2(prime, text_length):
     text = sample(prime, text_length)
     template = '''
 <html>
